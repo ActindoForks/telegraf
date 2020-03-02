@@ -55,15 +55,19 @@ func ParseValue(value sql.RawBytes) (interface{}, error) {
 		return 0, nil
 	}
 
+	if bytes.EqualFold(value, []byte("Connecting")) {
+		return 2, nil
+	}
+
+	if bytes.EqualFold(value, []byte("Preparing"))  {
+		return 3, nil
+	}
+
 	if val, err := strconv.ParseInt(string(value), 10, 64); err == nil {
 		return val, nil
 	}
 	if val, err := strconv.ParseFloat(string(value), 64); err == nil {
 		return val, nil
-	}
-
-	if len(string(value)) > 0 {
-		return string(value), nil
 	}
 
 	return nil, fmt.Errorf("unconvertible value: %q", string(value))
